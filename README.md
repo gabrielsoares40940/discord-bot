@@ -1,2 +1,2 @@
 # Bot do Discord
-Bot do Discord de uso recreativo.
+Trabalho de Aplic. de Cloud, Iot e Indústria 4.0 em Python, onde foi criado um bot no Discord que realiza várias ações, como verificar o valor do Dólar, Euro e até Bitcoin.
