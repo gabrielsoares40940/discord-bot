@@ -4,9 +4,7 @@ import random
 import asyncio
 import requests
 from dotenv import load_dotenv
-from datetime import datetime
 
-from utils.news import NewsAPI
 
 load_dotenv()
 
@@ -81,15 +79,15 @@ class MyClient(discord.Client):
         return request_hour.json()['time']
     
     # API de notícias
-    # def get_news(self):
-    #     request_news = requests.get(f'https://newsapi.org/v2/top-headlines?sources=google-news-br&apiKey={os.getenv("API_KEY_NEWS")}')
-    #     site = request_news.json()['articles'][0]['source']['name']
-    #     titulo = request_news.json()['articles'][0]['title']
-    #     data_publicacao = request_news.json()['articles'][0]['publishedAt']
-    #     url = request_news.json()['articles'][0]['url']
+    def get_news(self):
+        request_news = requests.get(f'https://newsapi.org/v2/top-headlines?sources=google-news-br&apiKey={os.getenv("API_KEY_NEWS")}')
+        site = request_news.json()['articles'][0]['source']['name']
+        titulo = request_news.json()['articles'][0]['title']
+        data_publicacao = request_news.json()['articles'][0]['publishedAt']
+        url = request_news.json()['articles'][0]['url']
         
-    #     lista = [titulo, data_publicacao, url, site]
-    #     return lista
+        lista = [titulo, data_publicacao, url, site]
+        return lista
 
     
     async def on_ready(self):
@@ -285,9 +283,8 @@ class MyClient(discord.Client):
             await message.reply(f'O valor **atual** do Bitcoin é de `R$ {price_bpi}`.', mention_author=False)   
             
         elif message.content == '?news':
-            news_client = NewsAPI(api_key=os.getenv('API_KEY_NEWS'))
-            top_headlines = news_client.get_top_headlines()
-            await message.reply(f'Temos uma notícia do site 🌐 `{top_headlines["site"]}`!{os.linesep}**{top_headlines["title"]}**{os.linesep}**Data de publicação: **{top_headlines["publishedAt"]}{os.linesep}{top_headlines["url"]}', mention_author=False)
+            news_client = self.get_news()
+            await message.reply(f'Temos uma notícia do site 🌐 `{news_client[3]}`!{os.linesep}**{news_client[0]}**{os.linesep}**Data de publicação: **{news_client[1]}{os.linesep}{news_client[2]}', mention_author=False)
             
         # Teste do bot editando a própria mensagem
         elif message.content == "?teste":
