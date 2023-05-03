@@ -69,7 +69,7 @@ class MyClient(discord.Client):
         # Chat GPT
             else: # Se o comando estiver em COMMANDS, o ChatGPT irá ignorar a mensagem e utilizar o comando pedido
                 
-                # Se o comando for usado no servidor CAPITALISMO, ele irá ter a coloração do servidor
+                # Se o comando for usado no ID do servidor, ele irá ter a coloração do servidor
                 if message.guild.id in [DISCORD-SERVER-ID]:
                     embedVar = discord.Embed(color=0xBF9676)
                     embedVar.add_field(name="",value=f'{chatgpt_response(message.content)}', inline=False)
