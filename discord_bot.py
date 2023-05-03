@@ -10,22 +10,44 @@ from utils.usdbrl import UsdToBrlAPI
 from utils.eurbrl import EurToBrlAPI
 from utils.weather import WeatherAPI
 from utils.hour import HourAPI
+from utils.openai import chatgpt_response
 
 load_dotenv()
 
 intents = discord.Intents.default()
 intents.message_content = True
 
-owner = MY-DISCORD-USER-ID
+owner = 'DISCORD-USER-NAME'
 
 class MyClient(discord.Client):
 
     NOT_PREFIX_ALLOWED = (
         'prefix',
-        'PREFIX',
         'teste',
-        'Teste',
-        'TESTE'
+        'Teste'
+    )
+    
+    COMMANDS = (
+        '?regras',
+        '?rules',
+        '?rolard20',
+        '?d20',
+        '?hello',
+        '?dolar',
+        '?bitcoin',
+        '?euro',
+        '?ryan',
+        '?tiringa',
+        '?fuleco',
+        '?clima',
+        '?weather',
+        '?hora',
+        '?hour',
+        '?news',
+        '?sobremim',
+        '?sobre mim',
+        '?aboutme',
+        '?about me'
     )
     
     async def on_ready(self):
@@ -35,10 +57,35 @@ class MyClient(discord.Client):
         if not message.content.startswith('?') and message.content not in self.NOT_PREFIX_ALLOWED:
             print('Mensagem de {0.author}: {0.content}'.format(message))
             return
+        
+        # Sempre que requisitar o bot, ele irá lhe responder dentro de 1 segundo com o direito de aparecer "teste bot está digitando..."
+        async with message.channel.typing():
+            if not message.channel.name == 'chatgpt':
+                if message.content not in self.COMMANDS: # Se o comando não estiver em COMMANDS, o ChatGPT irá responder normalmente
+                    channel_gpt = '#chatgpt'
+                    await asyncio.sleep(1)
+                    await message.reply(f'**{message.author.name}**, mande esse comando no {channel_gpt}', mention_author=False)
+
+        # Chat GPT
+            else: # Se o comando estiver em COMMANDS, o ChatGPT irá ignorar a mensagem e utilizar o comando pedido
+                
+                # Se o comando for usado no servidor CAPITALISMO, ele irá ter a coloração do servidor
+                if message.guild.id in [DISCORD-SERVER-ID]:
+                    embedVar = discord.Embed(color=0xBF9676)
+                    embedVar.add_field(name="",value=f'{chatgpt_response(message.content)}', inline=False)
+                    # await message.reply(f'`{chatgpt_response(message.content)}`', mention_author=False)
+                    await message.reply(embed=embedVar, mention_author=False)
+                    
+                # Se o comando for usado em qualquer outro servidor, ele irá ter a coloração do servidor
+                else:
+                    embedVar = discord.Embed(color=0x5263ED)
+                    embedVar.add_field(name="",value=f'{chatgpt_response(message.content)}', inline=False)
+                    # await message.reply(f'`{chatgpt_response(message.content)}`', mention_author=False)
+                    await message.reply(embed=embedVar, mention_author=False)
 
         # Regras
         if message.content.lower() in ('?regras', '?rules'): # Se o conteúdo da mensagem foi igual a "?regras", ele irá imprimir o nome do usuário e ditará as regras
-            if message.guild.id in [DISCORD-GUILD-ID]:
+            if message.guild.id in [DISCORD-SERVER-ID]:
                 embedVar = discord.Embed(title="Regras", color=0xBF9676)
                 embedVar.set_author(name=message.guild.name, icon_url=message.guild.icon)
                 embedVar.add_field(name="Regra única", value='Não usar **FDS** para "Fim de Semana"', inline=False)
@@ -55,15 +102,11 @@ class MyClient(discord.Client):
             await message.reply('Testando...', mention_author=False)
             await message.channel.send('https://media.tenor.com/LacNG2e3b3AAAAAd/spongebob-mr-crab.gif')
 
-        # Tudo bom?
-        elif message.content.lower() == '?tudo bom?': # Se o conteúdo da mensagem foi igual a "?tudo bom?", ele irá imprimir um emoji de polegar para cima
-            await message.reply('👍', mention_author=False)
-
         # Rolar D20
         elif message.content.lower() in ('?rolard20', '?d20'): # Se o conteúdo da mensagem foi igual a "?rolard20", ele irá fazer algumas ações:
-            if message.author.id in [DISCORD-USER-ID]: # Se o usuário for o utiliário do ID, irá rolar um dado de forma aleatória do número 15 ao 20
+            if message.author.id in [DISCORD-USER-ID]: # Se o usuário for o Ryan (seu ID), irá rolar um dado de forma aleatória do número 15 ao 20
                  dado = random.randint(15, 20)
-            elif message.author.id in [DISCORD-USER-ID]:# Se o usuário for o utiliário do ID, irá rolar um dado de número único (1)
+            elif message.author.id in [DISCORD-USER-ID]:# Se o usuário for o Biel (seu ID), irá rolar um dado de número único (1)
                  dado = 1
             else:
                 dado = random.randint(1, 20) # Se for um usuário comum, ele irá rolar um dado de forma aleatória do número 1 ao 20
@@ -71,13 +114,15 @@ class MyClient(discord.Client):
 
         # Comandos
         elif message.content.lower() == '?help':
-            if message.guild.id in [DISCORD-GUILD-ID]:
+            if message.guild.id in [DISCORD-SERVER-ID]:
                 embedVar = discord.Embed(title="Comandos", color=0xBF9676)
                 embedVar.set_author(name=message.guild.name, icon_url=message.guild.icon)
                 embedVar.add_field(name="`?regras / ?rules`", value='Irei lhe mostrar as regras do servidor.', inline=False)
                 embedVar.add_field(name="`?tudo bom?`", value='👍', inline=False)
                 embedVar.add_field(name="`?rolard20 / ?d20`", value='Irei rolar um dado de 20 lados para você.', inline=False)
                 embedVar.add_field(name="`?hello`", value='Irei oi para você.', inline=False)
+                embedVar.add_field(name="`?ryan`", value='Irei postar uma foto bem vergonhosa de **Ryan**.', inline=False)
+                embedVar.add_field(name="`?fuleco`", value='Irei postar uma foto de **Fuleco**. Representa um grande momento de sua vida.', inline=False)
                 embedVar.add_field(name="`prefix`", value='Irei lhe mostrar o prefixo.', inline=False)
                 embedVar.add_field(name="`?dolar`", value='Irei lhe informar o valor do dólar em tempo real.', inline=False)
                 embedVar.add_field(name="`?bitcoin`", value='Irei lhe informar o valor do bitcoin em tempo real.', inline=False)
@@ -140,16 +185,6 @@ class MyClient(discord.Client):
         elif message.content.lower() in ('?hora', '?hour'):
             current_hour = HourAPI()
             await message.reply(f'⏰ `{current_hour.get_hour()}`', mention_author=False)
-        
-        # Tiringa
-        elif message.content.lower() == '?tiringa':
-            await message.reply('https://media.tenor.com/nkdIOj6q7SIAAAAd/tiringa-mad.gif', mention_author=False)
-
-        # O bot irá mandar uma mensagem em sua DM
-        elif message.content.lower() == '?dmme':
-            await message.add_reaction('📬')
-            user = await client.fetch_user(message.author.id)
-            await user.send(f'Olá **{message.author.name}**, o que seria?')
 
         # O bot irá mostrar o clima
         elif message.content.lower() in ('?clima', '?weather'):
@@ -204,33 +239,19 @@ class MyClient(discord.Client):
                 elif desc == 'neve':
                     await message.add_reaction('✅')
                     await message.reply(f'🌡 A temperatura é de `{temp} °C`{os.linesep}🔆 E o tempo está com `{desc}` ❄', mention_author=False) 
-                        
-        # Teste do bot editando a própria mensagem
-        elif message.content.lower() == "?teste":
-            ctx = await message.reply("Processando.")
-            await asyncio.sleep(1)
-            
-            await ctx.edit(content="Processando..")
-            await asyncio.sleep(1)
-            
-            await ctx.edit(content="Processando...")
-            await asyncio.sleep(1)
-            
-            await ctx.edit(content="Processando.")
-            await asyncio.sleep(1)
-            
-            await ctx.edit(content="Processando..")
-            await asyncio.sleep(1)
-            
-            await ctx.edit(content="Processando...")
-            await asyncio.sleep(3)
-            
-            await ctx.edit(content="Teste completo!")
 
-        # O bot entra na call em que o usuário estiver
-        elif message.content.lower() == '?entrar':            
-            voice_client = await message.author.voice.channel.connect()
-            voice_client[voice_client.guild.id] = voice_client
+        # About me            
+        elif message.content.lower() in ('?about me', '?aboutme', '?sobre mim', '?sobremim'):
+            github_link = 'https://github.com/gabrielsoares40940/'
+            insta_link = 'https://www.instagram.com/gabriel.soares.br/'
+            
+            embedVar = discord.Embed(title="About me", color=0x5263ED)
+            embedVar.set_author(name=message.guild.name, icon_url=message.guild.icon)
+            embedVar.add_field(name="", value="My name is Gabriel Soares and I'm 19 years old. I'm currently studying Systems Analysis and Development in Fortaleza, Brazil. I'm totally interested in game development and my biggest project so far would be this bot.", inline=False)
+            embedVar.add_field(name="My GitHub", value=github_link, inline=True)
+            embedVar.add_field(name="My Instagram", value=insta_link, inline=False)
+            embedVar.set_footer(text=owner, icon_url='https://i.imgur.com/OurwHrV.png')
+            await message.reply(embed=embedVar, mention_author=False)
         
 client = MyClient(intents=intents)
 client.run(os.getenv('TOKEN'))
