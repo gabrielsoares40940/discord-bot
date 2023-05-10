@@ -65,6 +65,11 @@ class MyClient(discord.Client):
                     channel_gpt = '#chatgpt'
                     await asyncio.sleep(1)
                     await message.reply(f'**{message.author.name}**, mande esse comando no {channel_gpt}', mention_author=False)
+                    
+            elif message.content in self.COMMANDS: # Se o comando não estiver em COMMANDS, o ChatGPT irá responder normalmente
+                channel_gpt = '#chatgpt'
+                await message.reply(f'**{message.author.name}**, esse chat é exclusivo para o {channel_gpt}!', mention_author=False)
+                return None
 
         # Chat GPT
             else: # Se o comando estiver em COMMANDS, o ChatGPT irá ignorar a mensagem e utilizar o comando pedido
